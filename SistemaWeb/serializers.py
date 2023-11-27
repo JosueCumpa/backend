@@ -81,7 +81,7 @@ class MaquinaSerializer(serializers.ModelSerializer):
             if not nombre:
                 raise serializers.ValidationError("El campo 'nombre' no puede estar vacío.")
 
-            # Continuar con la creación del usuario
+            # Continuar con la creación del maquina
             MaquinaInyeccion = MaquinaInyeccion.objects.create_maquinainyeccion(**validated_data)
             return MaquinaInyeccion
 
