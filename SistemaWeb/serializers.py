@@ -30,22 +30,18 @@ class UserSerializer(serializers.ModelSerializer):
         if not username:
             raise serializers.ValidationError("El campo 'username' no puede estar vacío.")
 
-        # Establecer is_staff en True por defecto al crear un usuario
-        validated_data["is_staff"] = True
-        validated_data["is_superuser"] = True
+        
 
         # Continuar con la creación del usuario
         user = User.objects.create_user(**validated_data)
         return user
 
     def update(self, instance, validated_data):
-        # Validar first_name y last_name antes de la actualización
-        # dni = validated_data.get('dni', instance.dni)
+        
         first_name = validated_data.get("first_name", instance.first_name)
         last_name = validated_data.get("last_name", instance.last_name)
 
-        # if not dni:
-        #     raise serializers.ValidationError("El campo 'dni' no puede estar vacío.")
+    
 
         if not first_name:
             raise serializers.ValidationError("El campo 'first_name' no puede estar vacío.")
