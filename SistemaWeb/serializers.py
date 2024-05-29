@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import MaquinaInyeccion
+from .models import MaquinaInyeccion, TipoProducto, Producto, Categoria, MateriaPrima, Turno
 
 
 
@@ -56,7 +56,6 @@ class UserSerializer(serializers.ModelSerializer):
         instance.is_active = validated_data.get("is_active", instance.is_active)
         instance.is_superuser = validated_data.get("is_superuser", instance.is_superuser)
         instance.is_staff = validated_data.get("is_staff", instance.is_staff)
-      
         # Establecer una nueva contraseña si se proporciona en la solicitud
         password = validated_data.get("password")
         if password:
@@ -75,7 +74,6 @@ class MaquinaSerializer(serializers.ModelSerializer):
         fields = ['id', 'nombre', 'estado']
 
         def create(self, validated_data):
-          
             nombre = validated_data.get('nombre')
 
             if not nombre:
@@ -84,5 +82,119 @@ class MaquinaSerializer(serializers.ModelSerializer):
             # Continuar con la creación del maquina
             MaquinaInyeccion = MaquinaInyeccion.objects.create_maquinainyeccion(**validated_data)
             return MaquinaInyeccion
+        
+        def update(self, instance,validated_data):
+            nombre = validated_data.get('nombre')
+            if not nombre:
+                raise serializers.ValidationError("El campo 'nombre' no puede estar vacío.")
+            #Actualizar los campos relevantes del usuario
+            instance.nombre = validated_data.get("nombre", instance.nombre)
+            instance.estado = validated_data.get("estado", instance.estado)
+            instance.save()
+            return instance
 
+class TipoProductoSerializer(serializers.ModelSerializer):
 
+    class Meta:
+        model = TipoProducto
+        fields= ['id','nombre','descripcion','estado']
+    
+        def create(self, validated_data):
+            nombre = validated_data.get('nombre')
+            if not nombre:
+                    raise serializers.ValidationError("El campo 'nombre' no puede estar vacío.")
+        
+            TipoProducto = TipoProducto.objects.create_tipoproducto(**validated_data)
+            return TipoProducto
+    
+        def update(self, instance,validated_data):
+            nombre = validated_data.get('nombre')
+            if not nombre:
+                raise serializers.ValidationError("El campo 'nombre' no puede estar vacío.")
+            #Actualizar los campos relevantes
+            instance.nombre = validated_data.get("nombre", instance.nombre)
+            instance.estado = validated_data.get("estado", instance.estado)
+            instance.save()
+            return instance
+
+class CategoriaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Categoria
+        fields = ['id','nombre','descripcion','estado']
+
+    def create(self, validated_data):
+        return super().create(validated_data)
+    
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)
+
+class TurnoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Turno
+        fields = ['id','nombre','estado']
+    
+    def create(self, validated_data):
+        return super().create(validated_data)
+    
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)
+
+class ProductoSerializer(serializers.ModelSerializer):
+    tipoPro_nombre = serializers.SerializerMethodField()
+    class Meta:
+        model= Producto
+        fields=['id', 'nombre', 'descripcion', 'estado', 'tipoPro', 'tipoPro_nombre']
+    
+    def get_tipoPro_nombre(self, obj):
+        if obj.tipoPro:
+            return obj.tipoPro.nombre
+        return None
+    
+    def validate(self, data):
+        tipoPro = data.get('tipoPro')
+        nombre = data.get('nombre')
+
+        # Verificar si ya existe un producto con el mismo tipoPro y nombre, excluyendo el objeto actual en caso de actualización
+        if self.instance:
+            if Producto.objects.filter(tipoPro=tipoPro, nombre=nombre).exclude(id=self.instance.id).exists():
+                raise serializers.ValidationError("Ya existe un producto con el mismo Tipo de producto y Nombre.")
+        else:
+            if Producto.objects.filter(tipoPro=tipoPro, nombre=nombre).exists():
+                raise serializers.ValidationError("Ya existe un producto con el mismo Tipo de producto y Nombre.")
+        return data
+    
+    def create(self, validated_data):
+        return super().create(validated_data)
+    
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)  #posibilidad de cambiarlo mas tarde
+
+class MateriaPrimaSerializer(serializers.ModelSerializer):
+    categoria_nombre = serializers.SerializerMethodField()
+    class Meta:
+        model= MateriaPrima
+        fields=['id', 'nombre', 'descripcion', 'estado', 'categoria', 'categoria_nombre']
+    
+    def get_categoria_nombre(self, obj):
+        if obj.categoria:
+            return obj.categoria.nombre
+        return None
+    
+    def validate(self, data):
+        categoria = data.get('categoria')
+        nombre = data.get('nombre')
+
+        # Verificar si ya existe un producto con el mismo tipoPro y nombre, excluyendo el objeto actual en caso de actualización
+        if self.instance:
+            if MateriaPrima.objects.filter(categoria=categoria, nombre=nombre).exclude(id=self.instance.id).exists():
+                raise serializers.ValidationError("Ya existe un Materia Prima con la misma Categoria y Nombre.")
+        else:
+            if MateriaPrima.objects.filter(categoria=categoria, nombre=nombre).exists():
+                raise serializers.ValidationError("Ya existe una Materia Prima con la misma Categoria y Nombre.")
+        return data
+
+    def create(self, validated_data):
+        return super().create(validated_data)
+    
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)

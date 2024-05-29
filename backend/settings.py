@@ -85,8 +85,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'sistemaweb',
-        'USER': 'user',
-        'PASSWORD': '2314',
+        'USER':'root',
+        # 'USER': 'user',
+        # 'PASSWORD': '2314',
+        'PASSWORD': '',
         'HOST': 'localhost',  # O la dirección de tu servidor de base de datos
         'PORT': '3306',  # El puerto de tu servidor de base de datos
     }
@@ -153,7 +155,6 @@ SPECTACULAR_SETTINGS = {
 CORS_ALLOWED_ORIGINS = [    
     "http://localhost:5173",
     "http://127.0.0.1:8000",
-    
 ]
 
 SIMPLE_JWT = {
