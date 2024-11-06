@@ -1,5 +1,5 @@
 from django.urls import path, include
-from . views import  UserViewSet, MaquinaViewSet,TipoProductoViewSet,TurnoViewSet,CategoriaViewSet,ListaCategoriaActivoView, ProductoViewSet, ListaTproductoActivoView, MateriaPrimaViewSet
+from . views import  UserViewSet, MaquinaViewSet,RecomendacionViewSet,RecomendacionIDAPIView,DetallePrediccionPorIDAPIView,PrediccionV2ViewSet,DetallePrediccionViewSet,TipoProductoViewSet,TurnoViewSet,CategoriaViewSet,Prediction94APIView,RecomendacionAPIView,ListaCategoriaActivoView, ProductoViewSet, ListaTproductoActivoView, MateriaPrimaViewSet
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -10,9 +10,18 @@ router.register(r"Producto",ProductoViewSet, basename="Producto")
 router.register(r'Categoria', CategoriaViewSet, basename="Categoria")
 router.register(r'MateriaPrima', MateriaPrimaViewSet, basename="MateriaPrima")
 router.register(r'Turno',TurnoViewSet,basename="Turno")
-
+router.register(r"Prediccion", PrediccionV2ViewSet,basename="Prediccion")
+router.register(r"DetallePrediccion", DetallePrediccionViewSet,basename="DetallePrediccion")
+router.register(r"RecomendacionV2", RecomendacionViewSet, basename="RecomendacionV2")
 urlpatterns = [ 
     path("", include(router.urls)),
     path("ListaTproductoActivo/",ListaTproductoActivoView.as_view(), name="ListaTproductoActivo"),
-    path("ListaCategoriasActivas/", ListaCategoriaActivoView.as_view(), name="ListaCategoriasActivas")
+    path("ListaCategoriasActivas/", ListaCategoriaActivoView.as_view(), name="ListaCategoriasActivas"),
+    path("Prediccion94/", Prediction94APIView.as_view(), name="Prediccion94"),
+    path("Recomendacion/", RecomendacionAPIView.as_view(), name="Recomendacion"),
+    path('Recomendacionid/<int:prediccion_id>/', RecomendacionIDAPIView.as_view(), name='Recomendacionid'),
+    path('detalles-prediccion/<int:prediccion_id>/', DetallePrediccionPorIDAPIView.as_view(), name='detalles-prediccion-por-id'),
+    # path('prediccion-chart-data/', PrediccionChartDataView.as_view(), name='prediccion-chart-data'),
+    # path('product-fabrication-count/', ProductFabricationCountView.as_view(), name='product-fabrication-count'),
+    # path('top-5-materials/', Top5MaterialsView.as_view(), name='top-5-materials'),
 ]

@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
-from .models import MaquinaInyeccion, TipoProducto, Producto, Categoria, MateriaPrima, Turno
+from django.contrib.auth.models import User 
+from .models import MaquinaInyeccion, TipoProducto, Producto, Categoria, MateriaPrima, Turno, PrediccionV2, DetallePrediccion,Recomendacion
 
 
 
@@ -198,3 +198,95 @@ class MateriaPrimaSerializer(serializers.ModelSerializer):
     
     def update(self, instance, validated_data):
         return super().update(instance, validated_data)
+
+class PrediccionV2Serializer(serializers.ModelSerializer):
+    # Campos personalizados para mostrar los nombres de las relaciones
+    producto_nombre = serializers.CharField(source='producto.nombre', read_only=True)
+    tipo_producto_nombre = serializers.CharField(source='tipo_producto.nombre', read_only=True)
+    mp_cod_nombre = serializers.CharField(source='materia_prima.nombre', read_only=True)
+    maquina_nombre = serializers.CharField(source='maquina.nombre', read_only=True)
+    turno_nombre = serializers.CharField(source='turno.nombre', read_only=True)
+    color_nombre = serializers.CharField(source='color.nombre', read_only=True)
+    aditivo_nombre = serializers.CharField(source='aditivo.nombre', read_only=True)
+    operario_nombre = serializers.SerializerMethodField()
+    res_calidad_nombre = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PrediccionV2
+        fields = [
+            'id','fecha', 'cantidad', 'operario', 'operario_nombre', 'res_calidad', 'res_calidad_nombre', 
+            'turno', 'turno_nombre', 'maquina', 'maquina_nombre', 'tipo_producto', 'tipo_producto_nombre', 
+            'producto', 'producto_nombre', 'aditivo', 'aditivo_nombre', 'cantidad_mp', 'cantidad_aditivo', 
+            'cantidad_merma', 'largo', 'ancho', 'ciclos', 'peso_prensada', 'color', 'color_nombre', 
+            'materia_prima', 'mp_cod_nombre','prediccion_promedio'
+        ]
+
+    def get_operario_nombre(self, obj):
+        # Concatena el first_name y last_name del operario
+        operario = obj.operario
+        return f"{operario.first_name} {operario.last_name}"
+
+    def get_res_calidad_nombre(self, obj):
+        # Concatena el first_name y last_name del responsable de calidad
+        res_calidad = obj.res_calidad
+        return f"{res_calidad.first_name} {res_calidad.last_name}"
+
+    def create(self, validated_data):
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)
+
+class DetallePrediccionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DetallePrediccion
+        fields = '__all__'
+
+class RecomendacionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recomendacion
+        fields = '__all__'
+
+
+#     class Meta:
+#         model = Prediccion
+#         fields = [
+#            'id','fecha_produccion','fecha_registro', 'ord_fabri', 'cantidad_fabric', 'rechaz_no_ok', 'extra_ok', 'largo', 'ancho',
+#             'mp_kg', 'aditi_kg', 'merma_gr', 'ciclo_seg', 'c_molde_macho', 'c_molde_hembra',
+#             'c_product', 'peso_gr_prensad', 'zona_1', 'zona_2', 'zona_3', 'zona_4', 'zona_5',
+#             'operario', 'operario_nombre', 'responsable', 'responsable_nombre', 'producto',
+#             'producto_nombre', 'tipo', 'tipo_nombre', 'color', 'color_nombre', 'mp_cod',
+#             'mp_cod_nombre', 'aditivo', 'aditivo_nombre', 'maquina', 'maquina_nombre', 
+#             'turno', 'turno_nombre', 'prediccion', 'v_real'
+#         ]
+#     def get_operario_nombre(self, obj):
+#         # Concatena el first_name y last_name del operario
+#         operario = obj.operario
+#         return f"{operario.first_name} {operario.last_name}"
+#     def get_responsable_nombre(self, obj):
+#         # Concatena el first_name y last_name del responsable
+#         responsable = obj.responsable
+#         return f"{responsable.first_name} {responsable.last_name}"
+#     def create(self, validated_data):
+#         return super().create(validated_data)
+#     def update(self, instance, validated_data):
+#         return super().update(instance, validated_data)
+
+# class PrediccionDataLineSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Prediccion
+#         fields = [
+#             'fecha_produccion',
+#             'v_real',
+#             'prediccion',
+#             'cantidad_fabric',
+#             'ciclo_seg',
+#             'c_molde_macho',
+#             'c_molde_hembra',
+#             'zona_1',
+#             'zona_2',
+#             'zona_3',
+#             'zona_4',
+#             'zona_5',
+#             'c_product'
+#         ]
