@@ -21,7 +21,4 @@ urlpatterns = [
     path("Recomendacion/", RecomendacionAPIView.as_view(), name="Recomendacion"),
     path('Recomendacionid/<int:prediccion_id>/', RecomendacionIDAPIView.as_view(), name='Recomendacionid'),
     path('detalles-prediccion/<int:prediccion_id>/', DetallePrediccionPorIDAPIView.as_view(), name='detalles-prediccion-por-id'),
-    # path('prediccion-chart-data/', PrediccionChartDataView.as_view(), name='prediccion-chart-data'),
-    # path('product-fabrication-count/', ProductFabricationCountView.as_view(), name='product-fabrication-count'),
-    # path('top-5-materials/', Top5MaterialsView.as_view(), name='top-5-materials'),
 ]

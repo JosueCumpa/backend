@@ -85,43 +85,6 @@ class Produccion(models.Model):
     def __str__(self):
         return f'{self.producto} - {self.operario}'
 
-# class Prediccion(models.Model):
-#     ord_fabri = models.CharField(max_length=8,unique=True)
-#     cantidad_fabric = models.IntegerField()
-#     rechaz_no_ok = models.IntegerField(default=20)
-#     extra_ok = models.IntegerField(default=1)
-#     largo = models.FloatField()
-#     ancho = models.FloatField()
-#     mp_kg = models.FloatField()
-#     aditi_kg = models.FloatField()
-#     merma_gr = models.FloatField()
-#     ciclo_seg = models.FloatField()
-#     c_molde_macho = models.FloatField()
-#     c_molde_hembra = models.FloatField()
-#     c_product = models.FloatField()
-#     peso_gr_prensad = models.FloatField()
-#     zona_1 = models.FloatField()
-#     zona_2 = models.FloatField()
-#     zona_3 = models.FloatField()
-#     zona_4 = models.FloatField()
-#     zona_5 = models.FloatField()
-#     operario = models.ForeignKey(User, related_name='operario_prediccion', on_delete=models.CASCADE)
-#     responsable = models.ForeignKey(User, related_name='responsable_prediccion', on_delete=models.CASCADE)
-#     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
-#     tipo = models.ForeignKey(TipoProducto, on_delete=models.CASCADE)
-#     color = models.ForeignKey(MateriaPrima, related_name='color', on_delete=models.CASCADE)
-#     mp_cod = models.ForeignKey(MateriaPrima, on_delete=models.CASCADE)
-#     aditivo = models.ForeignKey(MateriaPrima, related_name='aditivo', on_delete=models.CASCADE)
-#     maquina = models.ForeignKey(MaquinaInyeccion, on_delete=models.CASCADE)
-#     turno = models.ForeignKey(Turno, on_delete=models.CASCADE)
-#     prediccion = models.FloatField()
-#     v_real = models.FloatField(null=True, blank=True)
-#     fecha_registro = models.DateTimeField(default=timezone.now)
-#     fecha_produccion = models.DateField(null=True, blank=True)
-#     def __str__(self):
-#         return f"Prediccion {self.id} - ord_fabri: {self.ord_fabri}"
-
-
 class PrediccionV2(models.Model):
     fecha = models.DateTimeField(default=timezone.now)
     cantidad = models.IntegerField()
