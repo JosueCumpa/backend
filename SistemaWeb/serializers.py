@@ -1,8 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User 
 from .models import MaquinaInyeccion, TipoProducto, Producto, Categoria, MateriaPrima, Turno, PrediccionV2, DetallePrediccion,Recomendacion
-
-
+CAMPO_NOMBRE_VACIO_ERROR = "El campo 'nombre' no puede estar vacío."
 
 class UserSerializer(serializers.ModelSerializer):
     
@@ -12,14 +11,10 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
-            # Validar first_name y last_name antes de la creación
-            #dni= validated_data["dni"]
+        # Validar first_name y last_name antes de la creación
         username = validated_data.get('username')
         first_name = validated_data.get("first_name")
         last_name = validated_data.get("last_name")
-
-        # if not dni:
-        #     raise serializers.ValidationError("El campo 'dni' no puede estar vacío.")
 
         if not first_name:
             raise serializers.ValidationError("El campo 'first_name' no puede estar vacío.")
@@ -30,8 +25,6 @@ class UserSerializer(serializers.ModelSerializer):
         if not username:
             raise serializers.ValidationError("El campo 'username' no puede estar vacío.")
 
-        
-
         # Continuar con la creación del usuario
         user = User.objects.create_user(**validated_data)
         return user
@@ -40,8 +33,6 @@ class UserSerializer(serializers.ModelSerializer):
         
         first_name = validated_data.get("first_name", instance.first_name)
         last_name = validated_data.get("last_name", instance.last_name)
-
-    
 
         if not first_name:
             raise serializers.ValidationError("El campo 'first_name' no puede estar vacío.")
@@ -77,16 +68,16 @@ class MaquinaSerializer(serializers.ModelSerializer):
             nombre = validated_data.get('nombre')
 
             if not nombre:
-                raise serializers.ValidationError("El campo 'nombre' no puede estar vacío.")
+                raise serializers.ValidationError(CAMPO_NOMBRE_VACIO_ERROR)
 
             # Continuar con la creación del maquina
-            MaquinaInyeccion = MaquinaInyeccion.objects.create_maquinainyeccion(**validated_data)
-            return MaquinaInyeccion
+            maquina_inyeccion = MaquinaInyeccion.objects.create_maquinainyeccion(**validated_data)
+            return maquina_inyeccion
         
         def update(self, instance,validated_data):
             nombre = validated_data.get('nombre')
             if not nombre:
-                raise serializers.ValidationError("El campo 'nombre' no puede estar vacío.")
+                raise serializers.ValidationError(CAMPO_NOMBRE_VACIO_ERROR)
             #Actualizar los campos relevantes del usuario
             instance.nombre = validated_data.get("nombre", instance.nombre)
             instance.estado = validated_data.get("estado", instance.estado)
@@ -102,15 +93,15 @@ class TipoProductoSerializer(serializers.ModelSerializer):
         def create(self, validated_data):
             nombre = validated_data.get('nombre')
             if not nombre:
-                    raise serializers.ValidationError("El campo 'nombre' no puede estar vacío.")
+                    raise serializers.ValidationError(CAMPO_NOMBRE_VACIO_ERROR)
         
-            TipoProducto = TipoProducto.objects.create_tipoproducto(**validated_data)
-            return TipoProducto
+            tipo_producto  = TipoProducto.objects.create_tipoproducto(**validated_data)
+            return tipo_producto 
     
         def update(self, instance,validated_data):
             nombre = validated_data.get('nombre')
             if not nombre:
-                raise serializers.ValidationError("El campo 'nombre' no puede estar vacío.")
+                raise serializers.ValidationError(CAMPO_NOMBRE_VACIO_ERROR)
             #Actualizar los campos relevantes
             instance.nombre = validated_data.get("nombre", instance.nombre)
             instance.estado = validated_data.get("estado", instance.estado)
@@ -151,15 +142,15 @@ class ProductoSerializer(serializers.ModelSerializer):
         return None
     
     def validate(self, data):
-        tipoPro = data.get('tipoPro')
+        tipo_Pro = data.get('tipoPro')
         nombre = data.get('nombre')
 
         # Verificar si ya existe un producto con el mismo tipoPro y nombre, excluyendo el objeto actual en caso de actualización
         if self.instance:
-            if Producto.objects.filter(tipoPro=tipoPro, nombre=nombre).exclude(id=self.instance.id).exists():
+            if Producto.objects.filter(tipoPro=tipo_Pro, nombre=nombre).exclude(id=self.instance.id).exists():
                 raise serializers.ValidationError("Ya existe un producto con el mismo Tipo de producto y Nombre.")
         else:
-            if Producto.objects.filter(tipoPro=tipoPro, nombre=nombre).exists():
+            if Producto.objects.filter(tipoPro=tipo_Pro, nombre=nombre).exists():
                 raise serializers.ValidationError("Ya existe un producto con el mismo Tipo de producto y Nombre.")
         return data
     
